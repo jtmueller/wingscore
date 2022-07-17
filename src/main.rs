@@ -157,7 +157,7 @@ impl Player {
 
     fn set_score(&mut self, new_score: Score) {
         for score in self.scores.iter_mut() {
-            if variant_eq(score, &new_score) {
+            if util::variant_eq(score, &new_score) {
                 *score = new_score;
                 break;
             }
@@ -205,7 +205,9 @@ fn score_grid<'a>(players: &'a [Player]) -> Row<'a, Message> {
                     let val = if val.len() == 0 { "0" } else { &val };
                     Message::SetScore(
                         player.id,
-                        parse_byte(val).map(|v| s.update(v)).unwrap_or(s.clone()),
+                        util::parse_byte(val)
+                            .map(|v| s.update(v))
+                            .unwrap_or(s.clone()),
                     )
                 })
                 .padding(5)
@@ -222,11 +224,13 @@ fn score_grid<'a>(players: &'a [Player]) -> Row<'a, Message> {
     container
 }
 
-fn parse_byte(val: &str) -> Option<u8> {
-    val.parse().ok()
-}
+mod util {
+    pub fn parse_byte(val: &str) -> Option<u8> {
+        val.parse().ok()
+    }
 
-/// Returns true if two enums have the same variant.
-fn variant_eq<T>(a: &T, b: &T) -> bool {
-    std::mem::discriminant(a) == std::mem::discriminant(b)
+    /// Returns true if two enums have the same variant.
+    pub fn variant_eq<T>(a: &T, b: &T) -> bool {
+        std::mem::discriminant(a) == std::mem::discriminant(b)
+    }
 }
